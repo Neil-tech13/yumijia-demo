@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>玉米家號碼牌</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=LXGW+WenKai+TC:wght@700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style id="css">
+/* Layout: night-market signboard header glowing over the grill, a paper queue ticket as the hero, and the queue drawn as kernels on a corn cob. Staff side is a counter board. */
+:root{
+  --husk:#EDEFE1; --paper:#FCFDF7; --ink:#211D16; --muted:#6B6A58; --line:#DCDDC9;
+  --sign:#1E1912; --sign-ink:#FFF4D6; --corn:#F5B50A; --corn-soft:#FBE6A2; --on-corn:#211D16;
+  --ember:#D9561E; --ready:#2C7A3A; --ready-bg:#E0F0DA; --danger:#B3361F; --shadow:rgba(60,45,10,.12);
+  --f-num:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --f-sign:"LXGW WenKai TC","Noto Serif TC","PingFang TC",serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --husk:#14130E; --paper:#1F1D16; --ink:#F1EEE0; --muted:#A9A58E; --line:#35322A;
+  --sign:#0C0B08; --sign-ink:#FFF0C9; --corn:#F7C330; --corn-soft:#4A3C12; --on-corn:#1A170F;
+  --ember:#F07A3F; --ready:#7CCB88; --ready-bg:#1D3220; --danger:#F07A61; --shadow:rgba(0,0,0,.4); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --husk:#14130E; --paper:#1F1D16; --ink:#F1EEE0; --muted:#A9A58E; --line:#35322A;
+  --sign:#0C0B08; --sign-ink:#FFF0C9; --corn:#F7C330; --corn-soft:#4A3C12; --on-corn:#1A170F;
+  --ember:#F07A3F; --ready:#7CCB88; --ready-bg:#1D3220; --danger:#F07A61; --shadow:rgba(0,0,0,.4); color-scheme:dark}
+html,body{background:var(--husk);color:var(--ink)}
+body{font-family:var(--f-body);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sign)}
+.wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* signboard */
+.sign{background:var(--sign);color:var(--sign-ink);position:relative;overflow:hidden}
+.sign::before{content:"";position:absolute;inset:auto -20% -60% -20%;height:140%;background:radial-gradient(closest-side,rgba(245,150,40,.38),transparent 70%);pointer-events:none}
+.lanterns{position:absolute;inset:0 0 auto;height:14px;background:radial-gradient(circle at 12px 7px,var(--corn) 3.5px,transparent 4.5px) 0 0/34px 14px repeat-x;opacity:.85}
+.sign-in{position:relative;display:flex;gap:14px;align-items:center;padding-block:30px 22px}
+.logo{width:58px;height:58px;flex:none;filter:drop-shadow(0 0 14px rgba(245,180,10,.45))}
+.sign-txt{min-width:0;flex:1}
+.eyebrow{font-size:12px;letter-spacing:.14em;font-weight:500;margin:0;opacity:.75}
+.shop{font-family:var(--f-sign);font-size:38px;font-weight:700;margin:0;line-height:1.15;letter-spacing:.06em;text-shadow:0 0 18px rgba(245,181,10,.35)}
+.badges{position:relative;display:flex;gap:8px;flex-wrap:wrap;padding-bottom:18px}
+.badge{font-size:12px;font-weight:500;border:1px solid rgba(255,240,200,.35);border-radius:99px;padding:3px 10px;white-space:nowrap}
+.badge.hot{background:var(--corn);color:var(--on-corn);border-color:var(--corn);font-weight:700}
+.badge .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#7CDB8A;margin-right:6px;vertical-align:1px;box-shadow:0 0 8px #7CDB8A}
+
+.stack{display:flex;flex-direction:column;gap:18px;padding-block:20px 48px}
+h2{font-family:var(--f-sign);font-size:20px;margin:0;font-weight:700;letter-spacing:.04em}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--ember);outline-offset:2px}
+.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:700;background:var(--ink);color:var(--husk);transition:transform .12s}
+.btn:active{transform:scale(.97)}
+.btn.corn{background:var(--corn);color:var(--on-corn)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.ok{background:var(--ready);color:var(--paper)}
+.btn.warn{background:transparent;color:var(--danger);border:1.5px solid var(--danger)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.link{background:none;border:0;padding:0;color:var(--ember);font-weight:500;text-decoration:underline;text-underline-offset:3px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{min-width:0}
+
+/* ticket */
+.ticket{background:var(--paper);border-radius:20px;border:1px solid var(--line);box-shadow:0 14px 30px -18px var(--shadow);position:relative;overflow:hidden}
+.ticket::before{content:"";position:absolute;inset:0 0 auto;height:6px;background:repeating-linear-gradient(90deg,var(--corn) 0 18px,var(--ember) 18px 24px)}
+.t-top{display:flex;justify-content:space-between;align-items:center;padding:20px 20px 0}
+.t-label{font-family:var(--f-sign);font-size:15px;letter-spacing:.2em;margin:0;color:var(--muted)}
+.t-num{font-family:var(--f-num);font-weight:900;font-size:clamp(110px,36vw,168px);line-height:.88;text-align:center;padding:8px 0 16px;font-variant-numeric:tabular-nums}
+.t-num small{display:block;font-family:var(--f-body);font-size:13px;font-weight:500;letter-spacing:.3em;color:var(--muted);margin-top:6px}
+.ticket.ready .t-num{color:var(--ready)}
+.ticket.ready{border-color:var(--ready);box-shadow:0 0 0 4px var(--ready-bg),0 14px 30px -18px var(--shadow)}
+.perf{height:0;border-top:2px dashed var(--line);margin:0 16px;position:relative}
+.perf::before,.perf::after{content:"";position:absolute;top:-12px;width:22px;height:22px;border-radius:50%;background:var(--husk);border:1px solid var(--line)}
+.perf::before{left:-28px}.perf::after{right:-28px}
+.t-body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:14px}
+.pill{align-self:flex-start;font-size:13px;font-weight:700;padding:4px 12px;border-radius:99px;margin:0;display:inline-flex;align-items:center;gap:6px}
+.pill.wait{background:var(--corn);color:var(--on-corn)}
+.pill.wait::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ember);animation:blink 1.2s infinite}
+.pill.ready{background:var(--ready);color:var(--paper)}
+.pill.done,.pill.none,.pill.cancel,.pill.notyet{background:var(--line);color:var(--ink)}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kv div{background:var(--husk);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.kv b{font-family:var(--f-num);font-size:44px;line-height:1;font-variant-numeric:tabular-nums}
+.kv b i{font-style:normal;font-size:18px;margin-left:3px;font-family:var(--f-body);font-weight:500;color:var(--muted)}
+.kv span{font-size:13px;color:var(--muted)}
+.big-msg{font-family:var(--f-sign);font-size:24px;font-weight:700;margin:0}
+.ask{display:flex;gap:10px}
+.ask input{flex:1;min-width:0;border:1.5px solid var(--line);background:var(--husk);border-radius:12px;padding:12px 14px;font-family:var(--f-num);font-size:30px;font-weight:700}
+
+/* the cob: one kernel per waiting group */
+.cob{display:flex;align-items:center;gap:0}
+.cob-body{flex:1;min-width:0;background:var(--corn-soft);border-radius:999px 26px 26px 999px;padding:8px 12px 8px 16px;display:flex;flex-wrap:wrap;gap:5px}
+.cob-husk{width:26px;height:40px;flex:none;background:linear-gradient(160deg,#7FA34A,#4E7A2C);border-radius:0 60% 60% 0/0 50% 50% 0;margin-left:-6px}
+.k{width:22px;height:26px;border-radius:45% 45% 40% 40%;background:var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--f-num);font-size:12px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.k.ahead{background:var(--corn);color:var(--on-corn)}
+.k.me{background:var(--ember);color:#fff;box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--ember);transform:scale(1.12)}
+.cob-legend{display:flex;gap:14px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.cob-legend span::before{content:"";display:inline-block;width:10px;height:12px;border-radius:40%;margin-right:5px;vertical-align:-1px;background:var(--line)}
+.cob-legend .a::before{background:var(--corn)}.cob-legend .m::before{background:var(--ember)}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--f-num);font-weight:900;font-size:32px;min-width:66px;padding:6px 10px;text-align:center;border-radius:14px;border:2px solid var(--line);background:var(--husk);line-height:1.05;font-variant-numeric:tabular-nums;color:var(--ink)}
+.chip.ready{background:var(--ready-bg);border-color:var(--ready);color:var(--ready)}
+.chip.me{box-shadow:0 0 0 3px var(--paper),0 0 0 6px var(--ember)}
+button.chip[aria-pressed="true"]{background:var(--ink);color:var(--husk);border-color:var(--ink);transform:translateY(-2px)}
+.empty{font-size:14px;color:var(--muted);margin:0}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stats div{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.stats b{font-family:var(--f-num);font-size:36px;line-height:1;font-variant-numeric:tabular-nums}
+.stats span{font-size:12px;color:var(--muted)}
+.stats .hl{background:var(--sign);border-color:var(--sign);color:var(--sign-ink)}
+.stats .hl span{color:var(--sign-ink);opacity:.7}
+
+.flavors{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.flv{background:var(--husk);border-radius:12px;padding:10px 4px;text-align:center;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.flv i{width:18px;height:18px;border-radius:50%;display:block}
+.info dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font-size:14px}
+.info dt{color:var(--muted)}
+.info dd{margin:0;min-width:0;overflow-wrap:anywhere}
+
+.tabs{display:flex;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px}
+.tabs button{flex:1;border:0;background:transparent;padding:9px 4px;border-radius:10px;font-weight:700;color:var(--muted);font-size:14px}
+.tabs button[aria-selected="true"]{background:var(--sign);color:var(--sign-ink)}
+.issue{font-size:20px;padding:20px;display:flex;justify-content:center;align-items:center;gap:12px;width:100%;border-radius:18px;background:linear-gradient(180deg,var(--corn),#E9A007);color:var(--on-corn);box-shadow:0 10px 22px -12px rgba(217,86,30,.7)}
+.issue b{font-family:var(--f-num);font-size:40px;line-height:1}
+.notice{background:var(--ready-bg);border:1px solid var(--ready);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.field{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.field input{border:1.5px solid var(--line);background:var(--husk);border-radius:10px;padding:9px 10px;font-size:15px;color:var(--ink);min-width:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qrbox{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.qr{background:#fff;padding:8px;border-radius:10px;line-height:0;flex:none}
+.qr img,.qr canvas{width:132px;height:132px}
+
+/* pitch */
+.hero-pitch{background:var(--sign);color:var(--sign-ink);border-radius:20px;padding:24px 20px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.hero-pitch::after{content:"";position:absolute;right:-60px;bottom:-80px;width:220px;height:220px;background:radial-gradient(closest-side,rgba(245,150,40,.45),transparent)}
+.hero-pitch h2{font-size:26px;line-height:1.3;color:var(--sign-ink);position:relative;text-wrap:balance}
+.hero-pitch p{margin:0;opacity:.85;position:relative;font-size:15px}
+.feats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.feat{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.feat svg{width:28px;height:28px;color:var(--ember)}
+.feat b{font-size:15px}
+.feat span{font-size:13px;color:var(--muted);line-height:1.5}
+.steps{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none;counter-reset:s}
+.steps li{display:flex;gap:12px;align-items:flex-start;counter-increment:s}
+.steps li::before{content:counter(s);flex:none;width:30px;height:30px;border-radius:50%;background:var(--corn);color:var(--on-corn);font-family:var(--f-num);font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center}
+.steps li div{min-width:0}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--husk);padding:10px 16px;border-radius:12px;font-size:14px;z-index:30;max-width:calc(100% - 32px)}
+.modal{position:fixed;inset:0;background:rgba(10,8,4,.7);display:flex;align-items:center;justify-content:center;z-index:20;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.modal .ticket{width:100%;max-width:340px}
+.modal .qr{align-self:center}
+.modal .qr img,.modal .qr canvas{width:190px;height:190px}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:14px}
+.vs>div{padding:10px 12px;border-top:1px solid var(--line);min-width:0}
+.vs>.h{border-top:0;font-weight:700;font-size:13px;letter-spacing:.06em}
+.vs>.old{background:var(--husk);color:var(--muted)}
+.vs>.new{background:var(--paper)}
+.vs>.h.old{color:var(--muted)}.vs>.h.new{background:var(--corn);color:var(--on-corn)}
+.vs b{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-bottom:2px}
+.vs>.new b{color:var(--ember)}
+.doc-mock{background:#fff;color:#222;border-radius:10px;padding:10px;font-family:Arial,sans-serif;text-align:center;border:1px solid var(--line);line-height:1.2}
+.doc-mock .bar{display:flex;gap:4px;margin-bottom:8px}.doc-mock .bar i{height:6px;flex:1;background:#e3e3e3;border-radius:3px}
+.doc-mock em{font-style:normal;font-size:40px;font-weight:900;color:#F08080;display:inline-block;border-right:3px solid #c0157a;padding-right:4px;animation:blink 1s steps(1) infinite}
+.langs{display:flex;flex-direction:column;gap:6px;margin:0;font-size:14px}
+.langs p{margin:0}
+.langs .l2{font-size:13px;color:var(--muted)}
+.links2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.links2 a,.links2 button{display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;font-weight:700;font-size:14px;padding:12px 8px;border-radius:12px;border:0}
+.l-star{background:var(--corn);color:var(--on-corn)}
+.l-line{background:#06C755;color:#fff}
+@keyframes blink{50%{opacity:.25}}
+@keyframes glow{50%{text-shadow:0 0 22px var(--ready-bg)}}
+@keyframes rise{from{transform:translateY(10px);opacity:.4}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion: no-preference){
+  .ticket.ready .t-num{animation:glow 1.8s ease-in-out infinite}
+  .ticket{animation:rise .4s ease-out}
+}
+@media (prefers-reduced-motion: reduce){.pill.wait::before{animation:none}}
+@media (max-width:380px){.flavors{grid-template-columns:repeat(2,1fr)}.feats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app"><header class="sign"><div class="lanterns"></div><div class="wrap"><div class="sign-in"><svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 58c-6-10-6-26 2-40 3 14 6 26 10 40z" fill="#5E8C33"></path><path d="M44 58c6-10 6-26-2-40-3 14-6 26-10 40z" fill="#4A7629"></path><ellipse cx="32" cy="30" rx="11" ry="25" fill="#F5B50A"></ellipse><g fill="#FFD95A"><ellipse cx="25.5" cy="11" rx="2.4" ry="1.9"></ellipse><ellipse cx="32" cy="11" rx="2.4" ry="1.9"></ellipse><ellipse cx="38.5" cy="11" rx="2.4" ry="1.9"></ellipse><ellipse cx="25.5" cy="15.6" rx="2.4" ry="1.9"></ellipse><ellipse cx="32" cy="15.6" rx="2.4" ry="1.9"></ellipse><ellipse cx="38.5" cy="15.6" rx="2.4" ry="1.9"></ellipse><ellipse cx="25.5" cy="20.2" rx="2.4" ry="1.9"></ellipse><ellipse cx="32" cy="20.2" rx="2.4" ry="1.9"></ellipse><ellipse cx="38.5" cy="20.2" rx="2.4" ry="1.9"></ellipse><ellipse cx="25.5" cy="24.799999999999997" rx="2.4" ry="1.9"></ellipse><ellipse cx="32" cy="24.799999999999997" rx="2.4" ry="1.9"></ellipse><ellipse cx="38.5" cy="24.799999999999997" rx="2.4" ry="1.9"></ellipse><ellipse cx="25.5" cy="29.4" rx="2.4" ry="1.9"></ellipse><ellipse cx="32" cy="29.4" rx="2.4" ry="1.9"></ellipse><ellipse cx="38.5" cy="29.4" rx="2.4" ry="1.9"></ellipse><ellipse cx="25.5" cy="34" rx="2.4" ry="1.9"></ellipse><ellipse cx="32" cy="34" rx="2.4" ry="1.9"></ellipse><ellipse cx="38.5" cy="34" rx="2.4" ry="1.9"></ellipse><ellipse cx="25.5" cy="38.599999999999994" rx="2.4" ry="1.9"></ellipse><ellipse cx="32" cy="38.599999999999994" rx="2.4" ry="1.9"></ellipse><ellipse cx="38.5" cy="38.599999999999994" rx="2.4" ry="1.9"></ellipse><ellipse cx="25.5" cy="43.199999999999996" rx="2.4" ry="1.9"></ellipse><ellipse cx="32" cy="43.199999999999996" rx="2.4" ry="1.9"></ellipse><ellipse cx="38.5" cy="43.199999999999996" rx="2.4" ry="1.9"></ellipse><ellipse cx="25.5" cy="47.8" rx="2.4" ry="1.9"></ellipse><ellipse cx="32" cy="47.8" rx="2.4" ry="1.9"></ellipse><ellipse cx="38.5" cy="47.8" rx="2.4" ry="1.9"></ellipse></g><path d="M32 58c-4-8-12-12-16-26 8 8 12 14 16 26zm0 0c4-8 12-12 16-26-8 8-12 14-16 26z" fill="#6E9E3C"></path></svg><div class="sign-txt"><p class="eyebrow">南機場夜市 · CORN HOUSE</p><h1 class="shop">玉米家</h1></div></div><div class="badges"><span class="badge"><span class="dot"></span>營業中・至 23:30</span><span class="badge">示範版</span><span class="badge hot">2019–2020 米其林餐盤推薦</span><span class="badge">排隊 6 組</span></div></div></header><main class="wrap stack"><div class="tabs" role="tablist"><button role="tab" id="tStaff" aria-selected="false">店家叫號</button><button role="tab" id="tCust" aria-selected="false">客人畫面</button><button role="tab" id="tPitch" aria-selected="true">方案介紹</button></div><section class="hero-pitch"><p class="eyebrow">給玉米家老闆</p><h2>不用再一直改<br>Google 文件了</h2><p>現在每叫一號，就要打開文件把數字刪掉重打，客人也要一直重新整理才看得到。換成這個，烤好點一下號碼，客人手機上就自己更新。</p></section><section class="card"><h2>現在 vs 換成號碼牌網頁</h2><div class="doc-mock" aria-hidden="true"><div class="bar"><i></i><i></i><i></i></div><div style="font-size:12px;font-weight:700">取餐號碼</div><em>41</em><div style="font-size:10px;color:#888;margin-top:2px">網頁版請重新整理</div></div><div class="vs"><div class="h old">現在：Google 文件</div><div class="h new">換成：號碼牌網頁</div><div class="old"><b>叫號</b>打開文件、刪掉數字、打新號碼</div><div class="new"><b>叫號</b>點一下號碼就好</div><div class="old"><b>客人看進度</b>要自己按重新整理</div><div class="new"><b>客人看進度</b>畫面自己更新</div><div class="old"><b>能看到什麼</b>只有目前叫到幾號</div><div class="new"><b>能看到什麼</b>前面幾組、大概等幾分鐘</div><div class="old"><b>一次烤好好幾支</b>只能放一個號碼</div><div class="new"><b>一次烤好好幾支</b>可以同時顯示好幾個號碼</div><div class="old"><b>按錯</b>手動改回來</div><div class="new"><b>按錯</b>按「復原上一步」</div></div></section><div class="feats"><div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 16V11a6 6 0 0112 0v5l2 2H4z"></path><path d="M10 21h4"></path><path d="M3 4l2 2M21 4l-2 2"></path></svg><b>一按就叫號</b><span>烤好時點一下，不用再切去文件打字。</span></div><div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="13" cy="4" r="2"></circle><path d="M10 21l2-6 3 3v3M8 12l3-4 4 2 2 3M11 8l-1 5"></path></svg><b>攤位前不再擠</b><span>客人知道還要等多久，會先去逛，回來剛好拿。</span></div><div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="3"></rect><path d="M11 18h2"></path></svg><b>原本的內容都留著</b><span>中英日韓取餐須知、五星評論、加 LINE 訂購，都放在同一頁。</span></div><div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="3"></circle><path d="M6 10v4M18 10v4"></path></svg><b>不用買機器</b><span>一支手機就能用，客人也不用裝 App。</span></div></div><section class="card"><h2>店裡怎麼用</h2><ol class="steps"><li><div><b>結帳時發號</b><div class="small muted">按「發下一號」，號碼牌上的 QR 給客人掃。</div></div></li><li><div><b>客人去逛夜市</b><div class="small muted">手機上看得到前面幾組、大概等幾分鐘。</div></div></li><li><div><b>烤好點一下</b><div class="small muted">號碼變成綠色「可以取餐」，客人回來拿。</div></div></li></ol><div class="row"><button class="btn corn" id="tryStaff">試按發號叫號</button><button class="btn ghost" id="tryCust">看客人手機畫面</button></div></section><p class="small muted" style="text-align:center;margin:0">此為示範版，畫面上的號碼都是範例，按了不會儲存。</p></main></div>
+<script id="state" type="application/json">{"shop":"玉米家","area":"南機場夜市","addr":"臺北市中正區中華路二段315巷5弄","phone":"0931 504 865","hours":"23:30","base":15,"per":4,"issued":28,"ready":[21,23],"done":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],"cancel":[],"day":"","updated":0,"baseUrl":"","undo":null,"demo":true,"preview":true}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script id="main">
+(function(){
+var S = JSON.parse(document.getElementById('state').textContent);
+var app = document.getElementById('app');
+var isStaff = false, view = 'customer', sel = new Set(), busy = false, art = null, dl = null, readOnly = false, armReset = false, toastT = null;
+var MAP = 'https://maps.app.goo.gl/Hf1Q8FgP2j67hbAw6';
+var LOGO = '<svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 58c-6-10-6-26 2-40 3 14 6 26 10 40z" fill="#5E8C33"/><path d="M44 58c6-10 6-26-2-40-3 14-6 26-10 40z" fill="#4A7629"/><ellipse cx="32" cy="30" rx="11" ry="25" fill="#F5B50A"/><g fill="#FFD95A">'+
+  (function(){ var s=''; for(var r=0;r<9;r++){ for(var c=0;c<3;c++){ s+='<ellipse cx="'+(25.5+c*6.5)+'" cy="'+(11+r*4.6)+'" rx="2.4" ry="1.9"/>'; } } return s; })()+
+  '</g><path d="M32 58c-4-8-12-12-16-26 8 8 12 14 16 26zm0 0c4-8 12-12 16-26-8 8-12 14-16 26z" fill="#6E9E3C"/></svg>';
+
+function store(kind, k, v){ try{ var s = kind==='s'?sessionStorage:localStorage; if(v===undefined) return s.getItem(k); if(v===null) s.removeItem(k); else s.setItem(k, v); }catch(e){ return null; } }
+function esc(t){ return String(t==null?'':t).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function today(){ try{ return new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'}); }catch(e){ return new Date().toISOString().slice(0,10); } }
+function hhmm(t){ if(!t) return '尚未開始'; var d=new Date(t); try{ return d.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Taipei'}); }catch(e){ return d.toTimeString().slice(0,5); } }
+function waiting(){ var out=[]; for(var i=1;i<=S.issued;i++){ if(S.ready.indexOf(i)<0 && S.done.indexOf(i)<0 && S.cancel.indexOf(i)<0) out.push(i); } return out; }
+function est(ahead){ return Number(S.base) + ahead*Number(S.per); }
+function status(n){
+  if(!n) return null;
+  if(n > S.issued) return {k:'notyet'};
+  if(S.ready.indexOf(n)>=0) return {k:'ready'};
+  if(S.done.indexOf(n)>=0) return {k:'done'};
+  if(S.cancel.indexOf(n)>=0) return {k:'cancel'};
+  var w = waiting(), ahead = w.filter(function(x){return x<n;}).length;
+  return {k:'wait', ahead:ahead, total:w.length, list:w};
+}
+function ticketUrl(n){ var b = S.baseUrl || location.href; return b.replace(/#.*$/,'') + (n ? '#n'+n : ''); }
+
+var myNum = null;
+(function(){ var m = location.hash.match(/^#n(\d{1,4})$/); if(m){ myNum = +m[1]; store('l','yumijiaNum', String(myNum)); } else { var v = store('l','yumijiaNum'); if(v && /^\d+$/.test(v)) myNum = +v; } })();
+
+/* ---------- customer ---------- */
+function cobHtml(st){
+  var list = st.list.filter(function(x){ return x<=myNum; });
+  var shown = list.slice(-24);
+  var k = shown.map(function(x){ return '<span class="k '+(x===myNum?'me':'ahead')+'">'+(x===myNum||shown.length<=12?x:'')+'</span>'; }).join('');
+  return '<div class="cob" role="img" aria-label="前面還有 '+st.ahead+' 組在烤"><div class="cob-body">'+k+'</div><div class="cob-husk"></div></div>'+
+    '<div class="cob-legend"><span class="a">前面在烤的</span><span class="m">你的玉米</span></div>';
+}
+function customerHtml(){
+  var st = status(myNum), w = waiting(), body = '';
+  if(myNum){
+    if(st.k==='wait'){
+      body = '<p class="pill wait">炭火烤製中</p>'+
+        '<div class="kv"><div><b>'+st.ahead+'<i>組</i></b><span>前面還有</span></div><div><b>'+est(st.ahead)+'<i>分</i></b><span>預估等候</span></div></div>'+
+        cobHtml(st)+
+        '<p class="small muted" style="margin:0">先去逛逛夜市吧！號碼變成綠色「可以取餐」時，再拿號碼牌回攤位就好。</p>';
+    } else if(st.k==='ready'){
+      body = '<p class="pill ready">可以取餐了</p><p class="big-msg">玉米烤好囉，請拿號碼牌到攤位取餐</p>';
+    } else if(st.k==='done'){
+      body = '<p class="pill done">已取餐</p><p style="margin:0">謝謝光臨玉米家，趁熱吃！</p>';
+    } else if(st.k==='cancel'){
+      body = '<p class="pill cancel">此號已取消</p><p style="margin:0">有問題請直接到攤位詢問。</p>';
+    } else {
+      body = '<p class="pill notyet">還沒發到這個號碼</p><p style="margin:0">店家目前發到 '+S.issued+' 號，請確認號碼牌上的數字。</p>';
+    }
+    body = '<section class="ticket '+st.k+'" aria-live="polite"><div class="t-top"><p class="t-label">號碼牌</p><button class="link small" id="chg">換號碼</button></div>'+
+      '<div class="t-num">'+myNum+'<small>'+esc(S.shop)+' · '+esc(S.area)+'</small></div><div class="perf"></div><div class="t-body">'+body+'</div></section>';
+  } else {
+    body = '<section class="ticket"><div class="t-top"><p class="t-label">查詢號碼牌</p></div><div class="t-body">'+
+      '<p style="margin:0">輸入號碼牌上的號碼，馬上知道前面還有幾組。</p>'+
+      '<form class="ask" id="askF"><input id="numIn" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="例如 23" aria-label="號碼"><button class="btn corn" type="submit">查詢</button></form></div></section>';
+  }
+  var ready = S.ready.slice().sort(function(a,b){return a-b;});
+  var readyHtml = ready.length ? '<div class="chips">'+ready.map(function(n){ return '<span class="chip ready'+(n===myNum?' me':'')+'">'+n+'</span>'; }).join('')+'</div>' : '<p class="empty">目前沒有待取的號碼。</p>';
+  return body+
+    '<section class="card"><div class="row" style="justify-content:space-between"><h2>可以取餐</h2><span class="small muted">更新於 '+hhmm(S.updated)+'</span></div>'+readyHtml+'</section>'+
+    '<div class="stats"><div class="hl"><b>'+(w[0]||'–')+'</b><span>正在烤</span></div><div><b>'+w.length+'</b><span>排隊組數</span></div><div><b>'+est(w.length)+'</b><span>現在抽號約等（分）</span></div></div>'+
+    '<section class="card"><h2>取餐須知</h2><div class="langs">'+
+      '<p>取餐依叫號順序，現烤現吃最好吃。請盡量別包起來，會悶出水氣。</p>'+
+      '<p class="l2">Pick-up follows the number order. Best eaten right off the grill. Please don’t wrap it, or it gets soggy.</p>'+
+      '<p class="l2">番号順にお渡しします。焼きたてが一番おいしいです。包むと蒸れてしまいます。</p>'+
+      '<p class="l2">번호 순서대로 드려요. 갓 구웠을 때 제일 맛있어요. 포장하면 눅눅해져요.</p></div>'+
+      '<div class="links2"><a class="l-star" href="'+MAP+'" target="_blank" rel="noopener">★ 給我們五星評論</a><button class="l-line" id="lineBtn">加 LINE 訂購</button></div></section>'+
+    infoHtml()+
+    '<div class="row small muted" style="justify-content:center"><button class="link" id="refresh">重新整理</button></div>';
+}
+function infoHtml(){
+  return '<section class="card info"><h2>今晚的口味</h2>'+
+    '<div class="flavors"><div class="flv"><i style="background:#E9B44C"></i>原味</div><div class="flv"><i style="background:#A35A2A"></i>孜然</div><div class="flv"><i style="background:#9DBB3A"></i>芥末</div><div class="flv"><i style="background:#F2DC5D"></i>檸檬</div></div>'+
+    '<p class="small muted" style="margin:0">辣度五段可選，軟硬可挑。每支依現場標價。</p>'+
+    '<dl><dt>地址</dt><dd>'+esc(S.addr)+'</dd>'+
+    '<dt>電話</dt><dd><span id="tel">'+esc(S.phone)+'</span> <button class="link small" id="copyTel">複製</button></dd>'+
+    '<dt>營業</dt><dd>傍晚營業至 '+esc(S.hours)+'</dd></dl>'+
+    '<a class="small" href="'+MAP+'" target="_blank" rel="noopener" style="color:var(--ember);font-weight:500">在 Google 地圖開啟 →</a></section>';
+}
+
+/* ---------- staff ---------- */
+function staffHtml(){
+  var w = waiting(), ready = S.ready.slice().sort(function(a,b){return a-b;}), dis = (busy||readOnly)?' disabled':'';
+  var selW = w.filter(function(n){return sel.has(n);}).length, selR = ready.filter(function(n){return sel.has(n);}).length;
+  var h = '';
+  if(S.demo && !isStaff) h += '<div class="notice"><b>示範模式</b><span class="small">可以隨意按按看，變化只會出現在你這支手機上，重新整理就會恢復。</span></div>';
+  else if(readOnly) h += '<div class="notice"><b>這個畫面只能查看</b><span class="small">只有店家本人登入的畫面可以發號和叫號。</span></div>';
+  if(S.day !== today() && S.issued > 0){
+    h += '<div class="notice"><b>這是 '+esc(S.day)+' 的號碼</b><span class="small">今天開店要從 1 號重新開始嗎？</span><div class="row"><button class="btn ok" id="newDay"'+dis+'>今天從 1 號開始</button></div></div>';
+  }
+  h += '<button class="btn issue" id="issue"'+dis+'>發下一號 <b>'+(S.issued+1)+'</b></button>';
+  h += '<div class="stats"><div class="hl"><b>'+w.length+'</b><span>烤製中</span></div><div><b>'+ready.length+'</b><span>等客人取</span></div><div><b>'+S.issued+'</b><span>今日已發</span></div></div>';
+  h += '<section class="card"><div class="row" style="justify-content:space-between"><h2>烤製中</h2><span class="small muted">點號碼可多選</span></div>'+
+    (w.length ? '<div class="chips">'+w.map(function(n){ return '<button class="chip" data-n="'+n+'" aria-pressed="'+sel.has(n)+'">'+n+'</button>'; }).join('')+'</div>' : '<p class="empty">還沒有客人在等。按「發下一號」給客人號碼牌。</p>')+
+    '<div class="row"><button class="btn ok" id="toReady"'+((selW&&!busy&&!readOnly)?'':' disabled')+'>烤好了，通知取餐'+(selW?'（'+selW+'）':'')+'</button><button class="btn warn" id="toCancel"'+((selW&&!busy&&!readOnly)?'':' disabled')+'>取消</button></div></section>';
+  h += '<section class="card"><h2>等客人來拿</h2>'+
+    (ready.length ? '<div class="chips">'+ready.map(function(n){ return '<button class="chip ready" data-n="'+n+'" aria-pressed="'+sel.has(n)+'">'+n+'</button>'; }).join('')+'</div>' : '<p class="empty">烤好的號碼會出現在這裡，客人的手機也會同時看到。</p>')+
+    '<div class="row"><button class="btn" id="toDone"'+((selR&&!busy&&!readOnly)?'':' disabled')+'>已取餐'+(selR?'（'+selR+'）':'')+'</button>'+
+    (S.undo ? '<button class="btn ghost" id="undo"'+dis+'>復原上一步</button>' : '')+'</div></section>';
+  h += '<section class="card"><h2>QR Code</h2><div class="qrbox"><div class="qr" id="qrShop"></div><div style="flex:1;min-width:160px" class="small"><b>攤位 QR</b><br>貼在攤位上，客人掃了輸入號碼就能查進度。每張號碼牌也有自己的 QR，發號後會跳出來給客人掃。</div></div></section>';
+  h += '<section class="card"><h2>正式版另外提供</h2><ul class="small" style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px"><li>號碼牌印製檔（每張印好專屬 QR，可重複使用）</li><li>店名、營業時間、預估等候時間自訂</li><li>多台手機同步叫號，客人畫面即時更新</li><li>打烊一鍵歸零、隔天自動從 1 號開始</li></ul></section>';
+  return h;
+}
+
+/* ---------- pitch for the stall owner ---------- */
+var IC = {
+  walk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="13" cy="4" r="2"/><path d="M10 21l2-6 3 3v3M8 12l3-4 4 2 2 3M11 8l-1 5"/></svg>',
+  bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 16V11a6 6 0 0112 0v5l2 2H4z"/><path d="M10 21h4"/><path d="M3 4l2 2M21 4l-2 2"/></svg>',
+  phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>',
+  money:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 10v4M18 10v4"/></svg>'
+};
+function pitchHtml(){
+  return '<section class="hero-pitch"><p class="eyebrow">給'+esc(S.shop)+'老闆</p><h2>不用再一直改<br>Google 文件了</h2>'+
+    '<p>現在每叫一號，就要打開文件把數字刪掉重打，客人也要一直重新整理才看得到。換成這個，烤好點一下號碼，客人手機上就自己更新。</p></section>'+
+    '<section class="card"><h2>現在 vs 換成號碼牌網頁</h2>'+
+      '<div class="doc-mock" aria-hidden="true"><div class="bar"><i></i><i></i><i></i></div><div style="font-size:12px;font-weight:700">取餐號碼</div><em>41</em><div style="font-size:10px;color:#888;margin-top:2px">網頁版請重新整理</div></div>'+
+      '<div class="vs">'+
+        '<div class="h old">現在：Google 文件</div><div class="h new">換成：號碼牌網頁</div>'+
+        '<div class="old"><b>叫號</b>打開文件、刪掉數字、打新號碼</div><div class="new"><b>叫號</b>點一下號碼就好</div>'+
+        '<div class="old"><b>客人看進度</b>要自己按重新整理</div><div class="new"><b>客人看進度</b>畫面自己更新</div>'+
+        '<div class="old"><b>能看到什麼</b>只有目前叫到幾號</div><div class="new"><b>能看到什麼</b>前面幾組、大概等幾分鐘</div>'+
+        '<div class="old"><b>一次烤好好幾支</b>只能放一個號碼</div><div class="new"><b>一次烤好好幾支</b>可以同時顯示好幾個號碼</div>'+
+        '<div class="old"><b>按錯</b>手動改回來</div><div class="new"><b>按錯</b>按「復原上一步」</div>'+
+      '</div></section>'+
+    '<div class="feats">'+
+      '<div class="feat">'+IC.bell+'<b>一按就叫號</b><span>烤好時點一下，不用再切去文件打字。</span></div>'+
+      '<div class="feat">'+IC.walk+'<b>攤位前不再擠</b><span>客人知道還要等多久，會先去逛，回來剛好拿。</span></div>'+
+      '<div class="feat">'+IC.phone+'<b>原本的內容都留著</b><span>中英日韓取餐須知、五星評論、加 LINE 訂購，都放在同一頁。</span></div>'+
+      '<div class="feat">'+IC.money+'<b>不用買機器</b><span>一支手機就能用，客人也不用裝 App。</span></div>'+
+    '</div>'+
+    '<section class="card"><h2>店裡怎麼用</h2><ol class="steps">'+
+      '<li><div><b>結帳時發號</b><div class="small muted">按「發下一號」，號碼牌上的 QR 給客人掃。</div></div></li>'+
+      '<li><div><b>客人去逛夜市</b><div class="small muted">手機上看得到前面幾組、大概等幾分鐘。</div></div></li>'+
+      '<li><div><b>烤好點一下</b><div class="small muted">號碼變成綠色「可以取餐」，客人回來拿。</div></div></li>'+
+    '</ol><div class="row"><button class="btn corn" id="tryStaff">試按發號叫號</button><button class="btn ghost" id="tryCust">看客人手機畫面</button></div></section>';
+}
+
+/* ---------- shell ---------- */
+function render(){
+  var tabs = (isStaff || S.demo) ? '<div class="tabs" role="tablist"><button role="tab" id="tStaff" aria-selected="'+(view==='staff')+'">店家叫號</button><button role="tab" id="tCust" aria-selected="'+(view==='customer')+'">客人畫面</button><button role="tab" id="tPitch" aria-selected="'+(view==='pitch')+'">方案介紹</button></div>' : '';
+  var w = waiting().length;
+  app.innerHTML = '<header class="sign"><div class="lanterns"></div><div class="wrap"><div class="sign-in">'+LOGO+'<div class="sign-txt"><p class="eyebrow">'+esc(S.area)+' · CORN HOUSE</p><h1 class="shop">'+esc(S.shop)+'</h1></div></div>'+
+    '<div class="badges"><span class="badge"><span class="dot"></span>營業中・至 '+esc(S.hours)+'</span><span class="badge">示範版</span><span class="badge hot">2019–2020 米其林餐盤推薦</span><span class="badge">排隊 '+w+' 組</span></div></div></header>'+
+    '<main class="wrap stack">'+tabs+(view==='staff'?staffHtml():view==='pitch'?pitchHtml():customerHtml())+'<p class="small muted" style="text-align:center;margin:0">此為示範版，畫面上的號碼都是範例，按了不會儲存。</p></main>';
+  bind();
+  if(view==='staff') drawQr(document.getElementById('qrShop'), ticketUrl(0), 132);
+}
+function drawQr(el, text, size){
+  if(!el || !text || typeof QRCode==='undefined') return null;
+  el.innerHTML='';
+  try{ new QRCode(el,{text:text,width:size*2,height:size*2,colorDark:'#211D16',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M}); }catch(e){}
+  return el.querySelector('canvas');
+}
+function on(id, ev, fn){ var e=document.getElementById(id); if(e) e.addEventListener(ev, fn); }
+function go(v){ view=v; render(); window.scrollTo(0,0); }
+function bind(){
+  on('tStaff','click',function(){ go('staff'); });
+  on('tCust','click',function(){ go('customer'); });
+  on('tPitch','click',function(){ go('pitch'); });
+  on('tryCust','click',function(){ if(!myNum){ myNum = waiting()[3] || waiting()[0] || null; } go('customer'); });
+  on('tryStaff','click',function(){ go('staff'); });
+  on('lineBtn','click',function(){ toast('正式版會直接連到店家的 LINE 官方帳號'); });
+  on('chg','click',function(){ myNum=null; store('l','yumijiaNum',null); render(); var i=document.getElementById('numIn'); if(i) i.focus(); });
+  on('askF','submit',function(e){ e.preventDefault(); var v=(document.getElementById('numIn').value||'').replace(/\D/g,''); if(!v) return; myNum=+v; store('l','yumijiaNum',String(myNum)); render(); });
+  on('refresh','click',function(){ location.reload(); });
+  on('copyTel','click',function(){ var t=S.phone; if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(function(){toast('已複製電話');},function(){selectTel();}); } else selectTel(); });
+  app.querySelectorAll('button.chip[data-n]').forEach(function(b){ b.addEventListener('click',function(){ var n=+b.dataset.n; if(sel.has(n)) sel.delete(n); else sel.add(n); render(); }); });
+  on('issue','click',function(){ var n=S.issued+1; commit(function(){ if(S.day!==today()&&S.issued===0) S.day=today(); S.issued=n; }, {ticket:n}); });
+  on('toReady','click',function(){ var ns=waiting().filter(function(n){return sel.has(n);}); commit(function(){ ns.forEach(function(n){ S.ready.push(n); }); }); });
+  on('toCancel','click',function(){ var ns=waiting().filter(function(n){return sel.has(n);}); commit(function(){ ns.forEach(function(n){ S.cancel.push(n); }); }); });
+  on('toDone','click',function(){ var ns=S.ready.filter(function(n){return sel.has(n);}); commit(function(){ S.ready=S.ready.filter(function(n){return ns.indexOf(n)<0;}); ns.forEach(function(n){ S.done.push(n); }); }); });
+  on('undo','click',function(){ var u=S.undo; commit(function(){ S.issued=u.issued; S.ready=u.ready; S.done=u.done; S.cancel=u.cancel; }, null, true); });
+  on('newDay','click',function(){ commit(function(){ zero(); }); });
+  on('reset','click',function(){ if(!armReset){ armReset=true; render(); setTimeout(function(){ armReset=false; if(view==='staff') render(); },5000); return; } armReset=false; commit(function(){ zero(); }); });
+  on('setF','submit',function(e){ e.preventDefault(); var g=function(id){ return document.getElementById(id).value.trim(); };
+    var url=g('sUrl'); if(url && !/^https:\/\//.test(url)){ toast('分享連結要以 https:// 開頭'); return; }
+    commit(function(){ S.shop=g('sShop')||'玉米家'; S.hours=g('sHours')||S.hours; S.base=Math.max(0,+g('sBase')||0); S.per=Math.max(0,+g('sPer')||0); S.baseUrl=url; }, {toast:'設定已儲存'}, true); });
+  on('sheet','click', makeSheet);
+}
+function selectTel(){ var el=document.getElementById('tel'); if(!el) return; var r=document.createRange(); r.selectNodeContents(el); var s=getSelection(); s.removeAllRanges(); s.addRange(r); toast('已選取電話，可長按複製'); }
+function zero(){ S.issued=0; S.ready=[]; S.done=[]; S.cancel=[]; S.day=today(); }
+function toast(msg){ var t=document.querySelector('.toast'); if(!t){ t=document.createElement('div'); t.className='toast'; t.setAttribute('role','status'); document.body.appendChild(t); } t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(function(){ t.hidden=true; },2600); }
+
+/* ---------- saving: the page republishes itself with the new state ---------- */
+var HEAD = '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.4 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>';
+function buildHtml(){
+  var json = JSON.stringify(S).replace(/</g,'\\u003c');
+  var SC = '<'+'/script>';
+  return HEAD+
+    '<title>玉米家號碼牌</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n'+
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=LXGW+WenKai+TC:wght@700&family=Noto+Sans+TC:wght@400;500;700&display=swap">\n'+
+    '<style id="css">'+document.getElementById('css').textContent+'</style>\n<div id="app"></div>\n'+
+    '<script id="state" type="application/json">'+json+SC+'\n'+
+    '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">'+SC+'\n'+
+    '<script id="main">'+document.getElementById('main').textContent+SC+'</body></html>';
+}
+function commit(fn, after, noUndo){
+  if(busy) return;
+  if(S.demo && !isStaff){
+    var snapD = {issued:S.issued, ready:S.ready.slice(), done:S.done.slice(), cancel:S.cancel.slice()};
+    fn(); if(!noUndo) S.undo = snapD; else if(after===null) S.undo = null;
+    S.updated = Date.now(); sel.clear(); render();
+    if(after && after.ticket) showTicket(after.ticket);
+    if(after && after.toast) toast(after.toast);
+    return;
+  }
+  if(readOnly || !art){ toast('這個畫面只能查看，無法更改'); return; }
+  var before = JSON.stringify(S);
+  var snap = {issued:S.issued, ready:S.ready.slice(), done:S.done.slice(), cancel:S.cancel.slice()};
+  fn();
+  if(!noUndo) S.undo = snap; else if(after===null) S.undo = null;
+  S.updated = Date.now(); sel.clear();
+  if(after) store('s','yumijiaAfter', JSON.stringify(after));
+  store('s','yumijiaView', view);
+  busy = true; render();
+  art.publish(buildHtml()).then(function(){ /* every view, this one too, reloads to the new version */ }, function(err){
+    busy = false; store('s','yumijiaAfter', null);
+    var c = err && err.code;
+    if(c==='conflict'){ toast('另一台裝置剛更新，正在載入最新號碼'); return; }
+    S = JSON.parse(before);
+    if(c==='not_writer'||c==='not_granted'||c==='consent_required'||c==='not_declared'||c==='capability_disabled'||c==='capability_removed'){ readOnly = true; toast('這個畫面只能查看，無法發號或叫號'); }
+    else if(c==='rate_limited'){ toast('按太快了，請隔幾秒再試'); }
+    else { toast('沒有存到，請檢查網路後再按一次'); }
+    render();
+  });
+}
+
+/* ---------- after reload: show the new ticket ---------- */
+function afterLoad(){
+  var a = store('s','yumijiaAfter'); if(!a) return; store('s','yumijiaAfter', null);
+  try{ a = JSON.parse(a); }catch(e){ return; }
+  if(a.toast) toast(a.toast);
+  if(a.ticket) showTicket(a.ticket);
+}
+function showTicket(n){
+  var m = document.createElement('div'); m.className='modal'; m.setAttribute('role','dialog'); m.setAttribute('aria-label','第 '+n+' 號號碼牌');
+  m.innerHTML = '<section class="ticket"><div class="t-top"><p class="t-label">'+esc(S.shop)+' 號碼牌</p></div><div class="t-num">'+n+'</div><div class="perf"></div><div class="t-body">'+
+    (true ? '<div class="qr" id="qrT"></div><p class="small" style="margin:0;text-align:center">請客人掃這個 QR，就能看到前面還有幾組</p>' : '<p class="small" style="margin:0">設定分享連結後，這裡會出現給客人掃的 QR。</p>')+
+    '<button class="btn" id="closeT">好，下一位</button></div></section>';
+  document.body.appendChild(m);
+  drawQr(document.getElementById('qrT'), ticketUrl(n), 190);
+  var close = function(){ m.remove(); };
+  document.getElementById('closeT').addEventListener('click', close);
+  document.getElementById('closeT').focus();
+  m.addEventListener('click', function(e){ if(e.target===m) close(); });
+}
+
+/* ---------- printable ticket sheet ---------- */
+function makeSheet(){
+  var count = Math.min(200, Math.max(1, +(document.getElementById('sheetN').value)||60)); store('l','yumijiaSheet', String(count));
+  if(!dl){ toast('這個畫面無法下載檔案'); return; }
+  var cols=3, W=600, H=820;
+  var rows=Math.ceil(count/cols), cv=document.createElement('canvas'); cv.width=cols*W; cv.height=rows*H;
+  var c=cv.getContext('2d'); c.fillStyle='#ffffff'; c.fillRect(0,0,cv.width,cv.height);
+  var tmp=document.createElement('div'); tmp.style.cssText='position:absolute;left:-9999px'; document.body.appendChild(tmp);
+  var draw=function(){
+    for(var i=0;i<count;i++){
+      var n=i+1, x=(i%cols)*W, y=Math.floor(i/cols)*H;
+      c.strokeStyle='#b8bba6'; c.setLineDash([10,8]); c.lineWidth=2; c.strokeRect(x+1,y+1,W-2,H-2); c.setLineDash([]);
+      c.fillStyle='#1E1912'; c.fillRect(x+24,y+24,W-48,100);
+      c.fillStyle='#F5B50A'; for(var d=0;d<14;d++){ c.beginPath(); c.arc(x+44+d*37,y+36,4,0,7); c.fill(); }
+      c.fillStyle='#FFF4D6'; c.font='700 46px "LXGW WenKai TC","Noto Sans TC",sans-serif'; c.textAlign='left'; c.fillText(S.shop, x+48, y+104);
+      c.font='500 22px "Noto Sans TC",sans-serif'; c.textAlign='right'; c.fillText(S.area+' 號碼牌', x+W-48, y+100);
+      c.fillStyle='#211D16'; c.textAlign='center'; c.font='900 190px "Big Shoulders Display",Impact,sans-serif'; c.fillText(String(n), x+W/2, y+316);
+      tmp.innerHTML=''; var q=drawQr(tmp, ticketUrl(n), 160); if(q) c.drawImage(q, x+W/2-160, y+350, 320, 320);
+      c.font='500 24px "Noto Sans TC",sans-serif'; c.fillText('掃 QR 看還要等多久', x+W/2, y+716);
+      c.fillStyle='#6B6A58'; c.font='400 20px "Noto Sans TC",sans-serif'; c.fillText('烤好會顯示「可以取餐」，請持本牌取玉米', x+W/2, y+754);
+    }
+    tmp.remove();
+    cv.toBlob(function(blob){
+      if(!blob){ toast('圖檔產生失敗，請減少張數再試'); return; }
+      dl.save({filename:'玉米家號碼牌_1-'+count+'.png', data:blob}).then(function(){ toast('已下載號碼牌圖檔'); }, function(e){ if(!(e&&(e.code==='declined'||e.code==='cancelled'))) toast('沒有下載，請再試一次'); });
+    }, 'image/png');
+  };
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(draw, draw);
+}
+
+/* ---------- boot ---------- */
+S.day=today(); S.updated=Date.now();
+if(S.demo && !/^#n\d/.test(location.hash)) view='pitch';
+if(location.hash==='#staff') view='staff';
+render();
+afterLoad();
+setInterval(function(){ if(view==='customer' && !isStaff && !S.demo && !document.hidden && !document.querySelector('.modal')) location.reload(); }, 60000);
+if(false){
+  window.claude.use('user').then(function(u){
+    return u ? u.canEdit() : false;
+  }).then(function(can){
+    if(can){ isStaff = true; var sv = store('s','yumijiaView'); store('s','yumijiaView', null);
+      view = /^#n\d/.test(location.hash) ? 'customer' : (sv || 'pitch'); render(); }
+  }, function(){});
+  window.claude.use('artifact').then(function(a){ art = a; }, function(){});
+  window.claude.use('downloads').then(function(d){ dl = d; }, function(){});
+}
+})();
+</script>
+</body>
+</html>

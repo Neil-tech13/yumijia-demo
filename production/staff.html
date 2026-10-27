@@ -15,7 +15,7 @@
 <body>
 <div id="app"><p class="loading">載入中…</p></div>
 <script type="module">
-import { onSnapshot, runTransaction, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+import { onSnapshot, runTransaction, serverTimestamp, getDocFromServer } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import { getAuth, connectAuthEmulator, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import { app as fbApp, db, shopRef, EMU, normalize, esc, today, hhmm, waiting, headerHtml, toast } from './common.js';
 
@@ -30,26 +30,25 @@ let busy = false, armReset = false, showSettings = false, loginErr = '', unsub =
 const sel = new Set();
 
 /* ---------- saving: every change is a transaction on the latest server copy ---------- */
-function withTimeout(p, ms) {
-  return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej({ code: 'timeout' }), ms))]);
-}
 // fn edits a fresh copy of the state and may return a value (e.g. the new ticket number).
 async function commit(fn, opts = {}) {
   if (busy) return;
   busy = true; render();
+  // Never give up on a write that may still land: a retry would then double up (e.g. issue two numbers).
+  const slow = setTimeout(() => toast('網路比較慢，還在儲存，請稍等…'), 6000);
   try {
-    const result = await withTimeout(runTransaction(db, async tx => {
+    const result = await runTransaction(db, async tx => {
       const snap = await tx.get(shopRef);
       const cur = normalize(snap.exists() ? snap.data() : null);
       const before = { issued: cur.issued, ready: cur.ready.slice(), done: cur.done.slice(), cancel: cur.cancel.slice(), day: cur.day };
       const out = fn(cur);
+      if (out === SKIP) return out;
       if (opts.clearUndo) cur.undo = null;
       else if (!opts.noUndo) cur.undo = before;
       cur.updated = serverTimestamp();
       tx.set(shopRef, cur);
       return out;
-    }), 12000);
-    sel.clear();
+    });
     if (opts.toast) toast(opts.toast);
     return result;
   } catch (err) {
@@ -59,9 +58,11 @@ async function commit(fn, opts = {}) {
     else toast('沒有存到，請檢查網路後再按一次');
     return undefined;
   } finally {
+    clearTimeout(slow);
     busy = false; render();
   }
 }
+const SKIP = Symbol('skip'); // returned by an edit that decided not to change anything
 const zero = cur => { cur.issued = 0; cur.ready = []; cur.done = []; cur.cancel = []; cur.day = today(); };
 
 /* ---------- screens ---------- */
@@ -125,7 +126,12 @@ function render() {
   else if (!loaded) main = '<p class="loading">正在讀取最新號碼…</p>';
   else main = staffHtml();
   const y = scrollY;
+  const form = document.getElementById('setF');
+  const typed = form ? [...form.querySelectorAll('input')].map(i => [i.id, i.value]) : null;
+  const focusId = document.activeElement && document.activeElement.id;
   app.innerHTML = headerHtml(S, '<span class="badge">店家叫號</span>') + '<main class="wrap stack">' + main + '</main>';
+  if (typed) typed.forEach(([id, v]) => { const i = document.getElementById(id); if (i) i.value = v; });
+  if (focusId) { const f = document.getElementById(focusId); if (f && f.tagName === 'INPUT') f.focus(); }
   scrollTo(0, y);
   bind();
   drawQr(document.getElementById('qrShop'), CUSTOMER_URL, 132);
@@ -175,27 +181,31 @@ function bind() {
   }));
   on('issue', 'click', async () => {
     const n = await commit(cur => {
+      if (cur.issued > 0 && cur.day !== today()) return SKIP; // numbers are from an earlier night: ask first
       if (cur.issued === 0) cur.day = today();
       cur.issued += 1;
       return cur.issued;
     });
-    if (n) showTicket(n);
+    if (typeof n === 'number') showTicket(n);
+    else if (n === SKIP) toast('這是前一天的號碼，請先選要不要從 1 號開始');
   });
-  on('toReady', 'click', () => { const ns = [...sel]; commit(cur => { const w = waiting(cur); ns.filter(n => w.includes(n)).forEach(n => cur.ready.push(n)); }); });
-  on('toCancel', 'click', () => { const ns = [...sel]; commit(cur => { const w = waiting(cur); ns.filter(n => w.includes(n)).forEach(n => cur.cancel.push(n)); }); });
+  // Each action takes the selected numbers with it; numbers tapped while it saves stay selected.
+  const take = () => { const ns = [...sel]; ns.forEach(n => sel.delete(n)); return ns; };
+  on('toReady', 'click', () => { const ns = take(); commit(cur => { const w = waiting(cur); ns.filter(n => w.includes(n)).forEach(n => cur.ready.push(n)); }); });
+  on('toCancel', 'click', () => { const ns = take(); commit(cur => { const w = waiting(cur); ns.filter(n => w.includes(n)).forEach(n => cur.cancel.push(n)); }); });
   on('toDone', 'click', () => {
-    const ns = [...sel];
+    const ns = take();
     commit(cur => { const hit = ns.filter(n => cur.ready.includes(n)); cur.ready = cur.ready.filter(n => !hit.includes(n)); hit.forEach(n => cur.done.push(n)); });
   });
   on('undo', 'click', () => commit(cur => {
-    const u = cur.undo; if (!u) return;
+    const u = cur.undo; if (!u) return SKIP;
     cur.issued = u.issued; cur.ready = u.ready || []; cur.done = u.done || []; cur.cancel = u.cancel || []; if (u.day) cur.day = u.day;
   }, { clearUndo: true }));
-  on('newDay', 'click', () => commit(zero, { toast: '已歸零，今天從 1 號開始' }));
+  on('newDay', 'click', () => { sel.clear(); return commit(zero, { toast: '已歸零，今天從 1 號開始' }); });
   on('keepDay', 'click', () => commit(cur => { cur.day = today(); }));
   on('reset', 'click', () => {
     if (!armReset) { armReset = true; render(); setTimeout(() => { armReset = false; render(); }, 5000); return; }
-    armReset = false; commit(zero, { toast: '號碼已歸零' });
+    armReset = false; sel.clear(); commit(zero, { toast: '號碼已歸零' });
   });
   on('openSet', 'click', () => { showSettings = true; render(); });
   on('closeSet', 'click', () => { showSettings = false; render(); });
@@ -229,7 +239,7 @@ function listen() {
     stale = !fromServer;
     render();
     // First time the stall signs in there is no document yet: create it with the defaults.
-    if (fromServer && !exists && !busy) commit(cur => { cur.day = today(); }, { noUndo: true });
+    if (fromServer && !exists && !busy) commit(cur => { if (!cur.day) cur.day = today(); }, { noUndo: true });
   }, err => {
     console.error(err); stale = true; render();
   });
@@ -244,7 +254,14 @@ onAuthStateChanged(auth, async u => {
   render();
 });
 addEventListener('offline', () => { stale = true; render(); });
-addEventListener('online', () => render());
+// Switching networks may never produce a new snapshot, so check with the server once back online.
+addEventListener('online', () => {
+  if (!user) return;
+  getDocFromServer(shopRef).then(snap => { S = normalize(snap.exists() ? snap.data() : null); stale = false; render(); }, () => {});
+});
+// A phone left open overnight must notice the new business day without a data change.
+setInterval(() => { if (!document.hidden && !document.querySelector('.modal') && !document.getElementById('setF')) render(); }, 60000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
 render();
 </script>
 </body>

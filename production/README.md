@@ -13,6 +13,7 @@
 | `common.js`、`style.css` | 兩頁共用的 Firebase 連線、計算和樣式 |
 | `firestore.rules` | 和 Firebase 後台已發布的規則一樣，給本機測試用 |
 | `tests/` | 本機模擬器測試，跟網站本身無關 |
+| `../print/玉米家QR貼紙_A4.pdf` | A4 QR 貼紙，指向 `https://yumijia.github.io/`，有 25／30／40／50 mm 四種大小，一頁一種。不用放進網站 repo |
 
 貼紙上的 QR 要指向 `https://yumijia.github.io/`。店家頁的網址是 `https://yumijia.github.io/staff.html`，只給老闆娘。
 
@@ -31,7 +32,8 @@
 4. 把這個資料夾的內容放到新 repo 的根目錄，`.nojekyll` 也要放進去
 5. repo 的 Settings → Pages，Source 選 `main` 分支的 `/ (root)`
 6. 到 Firebase 後台 → Authentication → 設定 → 授權網域，加入 `yumijia.github.io`。密碼登入通常不需要這一步，加了比較保險
-7. 用兩支手機測：一支開 `staff.html` 登入，按發號；另一支開客人頁，看號碼有沒有在 2 秒內更新
+7. **關掉自行註冊**（安全性）：Firebase 後台 → Authentication → 設定 → 使用者動作，把「啟用建立（註冊）」取消勾選。安全規則只檢查 email，萬一店家帳號被刪掉，別人可以用同一個 email 註冊來改號碼。關掉註冊就不會有這個問題，店家帳號已經建好，不受影響
+8. 用兩支手機測：一支開 `staff.html` 登入，按發號；另一支開客人頁，看號碼有沒有在 2 秒內更新
 
 ## 測試（本機模擬器）
 

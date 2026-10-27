@@ -14,7 +14,7 @@
 <body>
 <div id="app"><p class="loading">載入中…</p></div>
 <script type="module">
-import { onSnapshot } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+import { onSnapshot, getDocFromServer } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import { shopRef, normalize, store, esc, today, hhmm, waiting, est, status, headerHtml, toast, MAP } from './common.js';
 
 const app = document.getElementById('app');
@@ -23,12 +23,14 @@ let S = normalize(null), loaded = false, stale = false, staleShown = false, stal
 let myNum = null;
 {
   const m = location.hash.match(/^#n(\d{1,4})$/);
-  if (m) { myNum = +m[1]; store('yumijiaNum', String(myNum)); }
-  else { const v = store('yumijiaNum'); if (v && /^\d+$/.test(v)) myNum = +v; }
+  if (m) saveNum(+m[1]);
+  else { const v = /^(\d+)\|(.+)$/.exec(store('yumijiaNum') || ''); if (v && v[2] === today()) myNum = +v[1]; }
 }
+// A remembered number only counts for the business day it was saved on.
+function saveNum(n) { myNum = n; store('yumijiaNum', n ? n + '|' + today() : null); }
 addEventListener('hashchange', () => {
   const m = location.hash.match(/^#n(\d{1,4})$/);
-  if (m) { myNum = +m[1]; store('yumijiaNum', String(myNum)); render(); }
+  if (m) { saveNum(+m[1]); render(); }
 });
 
 // Started means the stall has issued numbers today; yesterday's numbers must not show as today's.
@@ -113,7 +115,7 @@ function render() {
 function bind() {
   const chg = document.getElementById('chg');
   if (chg) chg.addEventListener('click', () => {
-    myNum = null; store('yumijiaNum', null);
+    saveNum(null);
     if (location.hash) history.replaceState(null, '', location.pathname + location.search);
     render(); const i = document.getElementById('numIn'); if (i) i.focus();
   });
@@ -122,7 +124,7 @@ function bind() {
     e.preventDefault();
     const v = (document.getElementById('numIn').value || '').replace(/\D/g, '');
     if (!v || +v < 1) { toast('請輸入號碼牌上的數字'); return; }
-    myNum = +v; store('yumijiaNum', String(myNum)); render();
+    saveNum(+v); render();
   });
 }
 
@@ -145,6 +147,11 @@ onSnapshot(shopRef, { includeMetadataChanges: true }, snap => {
   setStale(true);
 });
 addEventListener('offline', () => setStale(true));
+// Switching networks may never produce a new snapshot, so check with the server once back online.
+addEventListener('online', () => { getDocFromServer(shopRef).then(snap => { S = normalize(snap.exists() ? snap.data() : null); loaded = true; setStale(false); render(); }, () => {}); });
+// Re-render now and then so the business-day check and "not started" state stay current on a page left open.
+setInterval(() => { if (!document.hidden) render(); }, 60000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
 render();
 </script>
 </body>

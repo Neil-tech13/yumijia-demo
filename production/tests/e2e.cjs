@@ -158,6 +158,24 @@ async function noBannedWords(page, label) {
     await cust.page.locator('a.l-line[href="https://lin.ee/example"]').waitFor({ timeout: 2000 });
     step('settings save; LINE button appears for customers');
 
+    // Typing in settings survives another phone changing the queue.
+    await staff.page.locator('#sShop').fill('玉米家測試中');
+    await staff2.page.locator('#issue').click();
+    await staff2.page.locator('.modal').waitFor(); await staff2.page.locator('#closeT').click();
+    await staff.page.getByText('發下一號 7').waitFor({ timeout: 3000 });
+    assert.strictEqual(await staff.page.locator('#sShop').inputValue(), '玉米家測試中');
+    await staff.page.locator('#sShop').fill('玉米家');
+    step('settings input keeps typed text while the queue changes');
+
+    // A number remembered from an earlier night is forgotten.
+    const old = await newPage(browser, errors);
+    await old.page.goto(base + '/index.html?emu');
+    await old.page.evaluate(() => localStorage.setItem('yumijiaNum', '3|2000-01-01'));
+    await old.page.reload();
+    await old.page.locator('#numIn').waitFor({ timeout: 10000 });
+    await old.ctx.close();
+    step('number saved on an earlier day is not reused');
+
     // Reset needs two taps and can be undone.
     await staff.page.locator('#reset').click();
     await staff.page.getByText('再按一次確認歸零').waitFor();

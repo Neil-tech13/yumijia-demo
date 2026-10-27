@@ -46,7 +46,7 @@ export function esc(t) { return String(t == null ? '' : t).replace(/[&<>"]/g, c 
 // The business day rolls over at 06:00 Taipei time, so a night that runs past midnight stays one day.
 export function today() {
   const d = new Date(Date.now() - 6 * 3600e3);
-  try { return d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Taipei' }); } catch (e) { return d.toISOString().slice(0, 10); }
+  try { return d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Taipei' }); } catch (e) { return new Date(d.getTime() + 8 * 3600e3).toISOString().slice(0, 10); }
 }
 export function hhmm(ts) {
   if (!ts) return '尚未開始';

@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1E1912">
 <title>玉米家號碼牌</title>
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="description" content="玉米家炭烤玉米・南機場夜市。輸入號碼牌號碼，即時查看前面還有幾組。">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <link rel="preconnect" href="https://firestore.googleapis.com">
@@ -136,16 +138,28 @@ function setStale(v) {
   staleT = setTimeout(() => { if (stale && !staleShown) { staleShown = true; render(); } }, 2500);
 }
 
-onSnapshot(shopRef, { includeMetadataChanges: true }, snap => {
-  const fromServer = !snap.metadata.fromCache;
-  if (fromServer || loaded) { S = normalize(snap.exists() ? snap.data() : null); }
-  if (fromServer) loaded = true;
-  setStale(!fromServer);
-  render();
-}, err => {
-  console.error(err);
-  setStale(true);
+// Every update to every open page counts against the free daily read quota, so a page left in the
+// background stops listening after a few minutes and catches up as soon as it is looked at again.
+let unsub = null, pauseT = null;
+function listen() {
+  if (unsub) return;
+  unsub = onSnapshot(shopRef, { includeMetadataChanges: true }, snap => {
+    const fromServer = !snap.metadata.fromCache;
+    if (fromServer || loaded) { S = normalize(snap.exists() ? snap.data() : null); }
+    if (fromServer) loaded = true;
+    setStale(!fromServer);
+    render();
+  }, err => {
+    console.error(err);
+    setStale(true);
+  });
+}
+document.addEventListener('visibilitychange', () => {
+  clearTimeout(pauseT);
+  if (document.hidden) pauseT = setTimeout(() => { if (unsub) { unsub(); unsub = null; } }, 3 * 60e3);
+  else listen();
 });
+listen();
 addEventListener('offline', () => setStale(true));
 // Switching networks may never produce a new snapshot, so check with the server once back online.
 addEventListener('online', () => { getDocFromServer(shopRef).then(snap => { S = normalize(snap.exists() ? snap.data() : null); loaded = true; setStale(false); render(); }, () => {}); });
